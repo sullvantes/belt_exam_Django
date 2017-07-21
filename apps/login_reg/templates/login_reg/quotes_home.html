@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+   <link rel="stylesheet" href="styles.css">
+  
+   <title>Books Home</title>
+</head>
+<body>
+    <h2>Welcome, {{first}}</h2>
+    <a href="{% url 'logout' %}"><button>Logoff</button></a>    
+{% if messages %}
+    <ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <h3>Quotable Quotes</h3>
+    {% for quote in not_favorited %}
+    <p>{{quote.attributed_to}}: {{quote.quote}}<br>Posted by: <a href="{% url 'user_info' user_id=quote.created_by.id %}">{{quote.created_by.first_name}}</a><a href="{% url 'favorite_add' quote_id=quote.id %}"><button>Add to Favorites</button></a></p>    
+    {% endfor %}
+    
+    <h3>Your Favorites</h3>
+    {% for quote in favorited %}
+    <p>{{quote.attributed_to}}: {{quote.quote}}<br>Posted by: <a href="{% url 'user_info' user_id=quote.created_by.id %}">{{quote.created_by.first_name}}</a><a href="{% url 'favorite_delete' quote_id=quote.id %}"><button>Remove From Favorites</button></a></p>    
+    {% endfor %}
+    
+    <h3>Contribute a Quote</h3>
+    <div class="container">
+    
+    <form action="{% url 'quote_add' %}" method='post'>
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="formGroupExampleInput">Quoted By:</label>
+            <input type="text" class="form-control" name = "attributed_to" id="attributed_to">
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="comment">Quote:</label>
+            <textarea class="form-control" rows="5" name= "quote"  id="quote"></textarea>
+            <input type="hidden" name="user_id" value="{{id}}"
+        </div> 
+        <br>
+        <input type=submit value="Submit">
+    </form>
+    </div>
+    
+
+</body>
+</html>
